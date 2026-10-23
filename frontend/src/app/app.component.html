@@ -1,0 +1,53 @@
+<main class="page">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Java + LangChain4j + Angular</p>
+      <h1>Chatbot de estudo</h1>
+      <p class="hint">
+        A mensagem sai daqui, passa por <code>POST /api/chat</code> e o LangChain4j
+        chama o modelo <strong>{{ modelName() }}</strong>.
+      </p>
+    </div>
+    <button type="button" class="ghost" (click)="clear()" [disabled]="sending()">
+      Nova conversa
+    </button>
+  </header>
+
+  <section class="transcript" aria-live="polite">
+    @if (messages().length === 0) {
+      <p class="empty">
+        Experimente perguntar o que é uma ChatMemory, ou peça para o assistente
+        explicar o caminho de uma mensagem neste projeto.
+      </p>
+    }
+
+    @for (msg of messages(); track $index) {
+      <article class="bubble" [class.user]="msg.role === 'user'" [class.bot]="msg.role === 'bot'">
+        <span>{{ msg.role === 'user' ? 'Você' : 'Assistente' }}</span>
+        <p>{{ msg.text }}</p>
+      </article>
+    }
+
+    @if (sending()) {
+      <p class="pending">O modelo está pensando…</p>
+    }
+  </section>
+
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
+
+  <form class="composer" (ngSubmit)="send()">
+    <label class="sr-only" for="draft">Mensagem</label>
+    <input
+      id="draft"
+      name="draft"
+      type="text"
+      [(ngModel)]="draft"
+      placeholder="Escreva uma mensagem"
+      autocomplete="off"
+      [disabled]="sending()"
+    />
+    <button type="submit" [disabled]="sending() || draft.trim().length === 0">Enviar</button>
+  </form>
+</main>
